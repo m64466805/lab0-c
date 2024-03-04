@@ -137,8 +137,27 @@ bool q_delete_dup(struct list_head *head)
     if (!head || list_empty(head)) {
         return false;
     }
-
-
+    struct list_head *cur = head->next;
+    struct list_head *next = cur->next;
+    bool dup = false;
+    while (cur != head && next != head) {
+        element_t *cur_entry = list_entry(cur, element_t, list);
+        element_t *next_entry = list_entry(next, element_t, list);
+        while (next != head && !strcmp(cur_entry->value, next_entry->value)) {
+            list_del(next);
+            q_release_element(next_entry);
+            next = cur->next;
+            next_entry = list_entry(next, element_t, list);
+            dup = true;
+        }
+        if (dup) {
+            list_del(cur);
+            q_release_element(cur_entry);
+            dup = false;
+        }
+        cur = next;
+        next = cur->next;
+    }
     return true;
 }
 
@@ -185,7 +204,9 @@ void q_sort(struct list_head *head, bool descend)
     if (!head || list_empty(head)) {
         return;
     }
+
 }
+
 
 /* Remove every node which has a node with a strictly less value anywhere to
  * the right side of it */
