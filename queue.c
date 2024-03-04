@@ -1,8 +1,8 @@
+#include "queue.h"
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include "queue.h"
 
 /* Notice: sometimes, Cppcheck would find the potential NULL pointer bugs,
  * but some of them cannot occur. You can suppress them by adding the
@@ -24,6 +24,9 @@ struct list_head *q_new()
 /* Free all storage used by queue */
 void q_free(struct list_head *head)
 {
+    if (!head) {
+        return;
+    }
     element_t *entry, *safe;
     list_for_each_entry_safe (entry, safe, head, list)
         q_release_element(entry);
@@ -199,14 +202,7 @@ void q_reverseK(struct list_head *head, int k)
 }
 
 /* Sort elements of queue in ascending/descending order */
-void q_sort(struct list_head *head, bool descend)
-{
-    if (!head || list_empty(head)) {
-        return;
-    }
-}
-
-
+void q_sort(struct list_head *head, bool descend) {}
 /* Remove every node which has a node with a strictly less value anywhere to
  * the right side of it */
 int q_ascend(struct list_head *head)
